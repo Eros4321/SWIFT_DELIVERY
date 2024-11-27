@@ -66,12 +66,13 @@ const CafeteriaList: React.FC = () => {
           <img src={logo} alt="Brand Logo" id="logo" />
          </div>
         <div className="icons">
-          <i className="bi bi-bell" aria-label="Notifications"></i> 
-          <i 
+        <i 
             className={`bi bi-search search-icon ${isSearchVisible ? 'hidden' : ''}`} 
             onClick={handleSearchToggle} 
             aria-label="Search"
           ></i> 
+          <i className="bi bi-bell" aria-label="Notifications"></i> 
+          <i className="bi bi-cart"></i>
         </div>
         {isSearchVisible && (
           <input
