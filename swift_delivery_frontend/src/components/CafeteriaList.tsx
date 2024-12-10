@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCafeterias } from '../services/api.ts';  
 import '../styles/CafeteriaList.scss';
-import logo from '../assets/logo.png';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Header from './Header';
+import Footer from './Footer';
 
 interface Cafeteria {
   id: number;
@@ -13,14 +14,14 @@ interface Cafeteria {
 
 const CafeteriaList: React.FC = () => {
   const [cafeterias, setCafeterias] = useState<Cafeteria[]>([]);
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [filteredCafeterias, setFilteredCafeterias] = useState<Cafeteria[]>([]);
 
   useEffect(() => {
     const getCafeterias = async () => {
       try {
         const data = await fetchCafeterias();
         setCafeterias(data);
+        setFilteredCafeterias(data);
       } catch (error) {
         console.error('Error fetching cafeterias:', error);
       }
@@ -29,88 +30,37 @@ const CafeteriaList: React.FC = () => {
     getCafeterias();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.search-input') && !target.closest('.bi-search')) {
-        setIsSearchVisible(false);
-      }
-    };
-  
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-  
-
-  const handleSearchToggle = () => {
-    setIsSearchVisible(!isSearchVisible);
-    setTimeout(() => {
-      if (isSearchVisible) {
-        (document.querySelector('.search-input') as HTMLInputElement)?.focus();
-      }
-    }, 0);
+  const handleSearch = (query: string) => {
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = cafeterias.filter((cafeteria) =>
+      cafeteria.name.toLowerCase().includes(lowerCaseQuery)
+    );
+    setFilteredCafeterias(filtered);
   };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const filteredCafeterias = cafeterias.filter((cafeteria) =>
-    cafeteria.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="container">
-      <div className="header">
-         <div className="logo-container">
-          <img src={logo} alt="Brand Logo" id="logo" />
-         </div>
-        <div className="icons">
-        <i 
-            className={`bi bi-search search-icon ${isSearchVisible ? 'hidden' : ''}`} 
-            onClick={handleSearchToggle} 
-            aria-label="Search"
-          ></i> 
-          <i className="bi bi-bell" aria-label="Notifications"></i> 
-          <i className="bi bi-cart"></i>
-        </div>
-        {isSearchVisible && (
-          <input
-            type="text"
-            className="search-input"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search cafeterias..."
-          />
-        )}
-
-      </div>
-      <div className='cafeterias-title'>
-          <h1>Cafeterias</h1>
-      </div>
+      <Header onSearch={handleSearch}/>
+      <h1 id="cafeteria-title">Cafeterias</h1>
       <ul className="cafeteria-list">
-        {filteredCafeterias.map(cafeteria => (
-          <li key={cafeteria.id}  className="cafeteria-container">
+        {filteredCafeterias.map((cafeteria) => (
+          <li key={cafeteria.id} className="cafeteria-container">
             <div>
-               {cafeteria.image && (
-                  <img 
-                    src={cafeteria.image}
-                    alt={cafeteria.name} 
-                  />
-                )}
-                <br />
-                <div className="cafeteria-name">                    
-                    <strong>{cafeteria.name}</strong>                    
-                    <div id="arrow-icon">
-                        <Link to={`/cafeteria/${cafeteria.id}`}>
-                            <i className="bi bi-arrow-right-circle-fill"></i>
-                        </Link>
-                    </div>
+              {cafeteria.image && <img src={cafeteria.image} alt={cafeteria.name} />}
+              <br />
+              <div className="cafeteria-name">
+                <strong>{cafeteria.name}</strong>
+                <div id="arrow-icon">
+                  <Link to={`/cafeteria/${cafeteria.id}`}>
+                    <i className="bi bi-arrow-right-circle-fill"></i>
+                  </Link>
                 </div>
+              </div>
             </div>
           </li>
         ))}
       </ul>
+      <Footer/>
     </div>
   );
 };

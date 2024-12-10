@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchMenuItems } from '../services/api.ts';
 import '../styles/menu.scss';
+import Header from './Header';
+import Footer from './Footer';
 
 interface MenuItem {
   id: number;
@@ -63,6 +65,8 @@ const Menu: React.FC = () => {
   const { cafeteriaId } = useParams<{ cafeteriaId: string }>();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [quantities, setQuantities] = useState<QuantityMap>({});
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [cart, setCart] = useState<MenuItem[]>([]);
 
   useEffect(() => {
     const getMenuItems = async () => {
@@ -75,40 +79,67 @@ const Menu: React.FC = () => {
     };
 
     getMenuItems();
+
+    const savedQuantities = localStorage.getItem('quantities');
+    if (savedQuantities) {
+      setQuantities(JSON.parse(savedQuantities));
+    }
+
   }, [cafeteriaId]);
 
   const handleQuantityChange = (itemId: number, quantity: number) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [itemId]: quantity,
-    }));
+    setQuantities((prev) => {
+      const updatedQuantities = { ...prev, [itemId]: quantity };
+      localStorage.setItem('quantities', JSON.stringify(updatedQuantities)); 
+      return updatedQuantities;
+    });
   };
 
+  const filteredMenuItems = menuItems.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleAddToCart = (item: MenuItem) => {
+    const quantity = quantities[item.id] || 0;
+    if (quantity > 0) {
+      const itemToAdd = { ...item, quantity };  // Add quantity to the item object
+      setCart((prevCart) => [...prevCart, itemToAdd]);  // Add the item to the cart
+    }
+  };
 
   return (
     <div className='container'>
+      <Header onSearch={(query) => setSearchQuery(query)}/> 
       <h1>Menu</h1>
-      {menuItems.length > 0 ? (
-        <ul className='menu-list'>
-          {menuItems.map((item) => (
-            <li key={item.id} className='menu-container'>
+      {filteredMenuItems.length > 0 ? (
+        <ul className="menu-list">
+          {filteredMenuItems.map((item) => (
+            <li key={item.id} className="menu-container">
               {item.image && <img src={item.image} alt={item.name} width="100" />}
               <p>{item.available ? 'Available' : 'Not Available'}</p>
-              <strong>{item.name}</strong>: ${item.price}
-              <QuantitySelector
-                initialQuantity={quantities[item.id] || 0}
-                min={0}
-                max={10}
-                onQuantityChange={(quantity) =>
-                  handleQuantityChange(item.id, quantity)
-                }
-              />
+              <strong>{item.name}</strong>: ₦{item.price}
+              <div className='buttons'>
+                  <QuantitySelector
+                    initialQuantity={quantities[item.id] || 0}
+                    min={0}
+                    max={10}
+                    onQuantityChange={(quantity) => handleQuantityChange(item.id, quantity)}
+                  />
+                  <button
+                    className="add-to-cart" 
+                    onClick={() => handleAddToCart(item)} 
+                    
+                  >
+                    Add to Cart
+                  </button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
         <p>No menu items available for this cafeteria.</p>
       )}
+      <Footer/>
     </div>
   );
 };

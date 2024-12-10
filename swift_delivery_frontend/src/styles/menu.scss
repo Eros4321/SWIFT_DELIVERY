@@ -51,41 +51,73 @@ h1{
     }    
 }
 
-.quantity-selector {
-    max-width: 100px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: Arial, sans-serif;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
-  }
-  
-  button {
-    background-color: white;
-    color: black;
-    border: none;
-    padding: 5px 10px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  button:hover:not(:disabled) {
-    background-color: #e59422;
-  }
-  
-  .quantity {
-    font-size: 1.2rem;
-    font-weight: bold;
-    width: 30px;
-    text-align: center;
-  }
-  
+.buttons {
+         display: flex;
+         gap: 10px;
+         max-height: 60px;
+         align-items: center;
+         margin-top: 10px; 
+
+
+
+        .quantity-selector {
+            max-width: 90px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: Arial, sans-serif;
+            border-style: solid;
+            border-color: black;
+            border-width: 1px;
+            justify-content: space-between;
+            height: 50px;
+        }
+        
+        button {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: color 0.3s ease;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        button:hover:not(:disabled) {
+            color: #e59422;
+        }
+        
+        .quantity {
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .add-to-cart {
+            background-color: white;
+            color: black;
+            border-style: solid;
+            padding: 5px 10px;
+            border-width: 1px;
+            cursor: pointer;
+            transition: color 0.3s ease, border-color 0.3s ease,  background-color 0.3s ease;
+            font-size: 0.9rem;
+            height: 50px;
+            font-family: Arial, sans-serif;
+            border-color: black;
+
+            &:hover {
+                color: #e59422; 
+                border-color: #e59422;
+                background-color: transparent !important; 
+            }
+        }
+
+    }
