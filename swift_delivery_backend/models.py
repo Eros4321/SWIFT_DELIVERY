@@ -8,12 +8,19 @@ class Cafeteria(models.Model):
     def __str__(self):
         return self.name
     
+class Category(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+    
 class MenuItem(models.Model):
-    cafeteria = models.ForeignKey(Cafeteria, on_delete=models.CASCADE, related_name='menu_items',)
+    cafeteria = models.ManyToManyField(Cafeteria, related_name='menu_items', null=True, blank=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     available = models.BooleanField(default=True)
     image = models.ImageField(upload_to='menu_images/', null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
