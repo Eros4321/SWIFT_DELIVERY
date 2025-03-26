@@ -22,6 +22,8 @@
           font-weight: bold; 
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
           transition: transform 0.2s ease;
+          color: black;
+          position: relative; 
 
             &.search-icon {
                 transition: opacity 0.3s ease, transform 0.3s ease;
@@ -29,6 +31,27 @@
             &.hidden {
                 opacity: 0; 
                 transform: scale(0); 
+            }
+        }
+
+        .cart-container {
+            position: relative; 
+
+            .cart-badge {
+                position: absolute;
+                top: -5px;
+                right: -10px;
+                background-color: #fda939;
+                color: white;
+                font-size: 12px;
+                font-weight: bold;
+                border-radius: 50%;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
             }
         }
 

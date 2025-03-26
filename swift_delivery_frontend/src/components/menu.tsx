@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchMenuItems } from '../services/api.ts';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/menu.scss';
 import Header from './Header';
 import Footer from './Footer';
@@ -10,6 +11,7 @@ interface MenuItem {
   name: string;
   price: number;
   available: boolean;
+  category_name?: string;
   image?: string | null;
 }
 
@@ -25,12 +27,16 @@ interface QuantityMap {
 }
 
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
-  initialQuantity = 1,
+  initialQuantity = 0,
   min = 0,
   max = 100,
   onQuantityChange,
 }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
+
+  useEffect(() => {
+    setQuantity(initialQuantity); // Sync with parent state
+  }, [initialQuantity]);
 
   const handleIncrease = () => {
     if (quantity < max) {
@@ -66,7 +72,15 @@ const Menu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [quantities, setQuantities] = useState<QuantityMap>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [cart, setCart] = useState<MenuItem[]>([]);
+  const [cart, setCart] = useState<MenuItem[]>(() => {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+  const [alertMessage, setAlertMessage] = useState<string | null>(null); 
+  
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() => {
     const getMenuItems = async () => {
@@ -98,44 +112,86 @@ const Menu: React.FC = () => {
   const filteredMenuItems = menuItems.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+   
   const handleAddToCart = (item: MenuItem) => {
     const quantity = quantities[item.id] || 0;
-    if (quantity > 0) {
-      const itemToAdd = { ...item, quantity };  // Add quantity to the item object
-      setCart((prevCart) => [...prevCart, itemToAdd]);  // Add the item to the cart
+  if (quantity > 0) {
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex(cartItem => cartItem.id === item.id);
+      let updatedCart;
+
+      if (existingItemIndex !== -1) {
+        // If the item already exists, update its quantity
+        updatedCart = prevCart.map((cartItem, index) =>
+          index === existingItemIndex ? { ...cartItem, quantity } : cartItem
+        );
+      } else {
+        // If it's a new item, add it to the cart
+        updatedCart = [...prevCart, { ...item, quantity }];
+      }
+     
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+
+    setAlertMessage(`${item.name} added to cart!`);
+    setTimeout(() => setAlertMessage(null), 3000);
     }
   };
 
+  const groupedMenuItems = filteredMenuItems.reduce((groups, item) => {
+    const category = item.category_name || 'Uncategorized';
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(item);
+    return groups;
+  }, {} as Record<string, MenuItem[]>);
+
   return (
-    <div className='container'>
-      <Header onSearch={(query) => setSearchQuery(query)}/> 
+    <div className="container">
+      <Header onSearch={(query) => setSearchQuery(query)} />
       <h1>Menu</h1>
-      {filteredMenuItems.length > 0 ? (
-        <ul className="menu-list">
-          {filteredMenuItems.map((item) => (
-            <li key={item.id} className="menu-container">
-              {item.image && <img src={item.image} alt={item.name} width="100" />}
-              <p>{item.available ? 'Available' : 'Not Available'}</p>
-              <strong>{item.name}</strong>: ₦{item.price}
-              <div className='buttons'>
-                  <QuantitySelector
-                    initialQuantity={quantities[item.id] || 0}
-                    min={0}
-                    max={10}
-                    onQuantityChange={(quantity) => handleQuantityChange(item.id, quantity)}
-                  />
-                  <button
-                    className="add-to-cart" 
-                    onClick={() => handleAddToCart(item)} 
-                    
-                  >
-                    Add to Cart
-                  </button>
-              </div>
-            </li>
+
+      {/* Bootstrap Alert */}
+      {alertMessage && (
+        <div className="alert alert-success text-center" role="alert">
+          {alertMessage}
+        </div>
+      )}
+
+      {Object.keys(groupedMenuItems).length > 0 ? (
+        <div>
+          {Object.entries(groupedMenuItems).map(([category, items]) => (
+            <div key={category} className="menu-category">
+              <h2>{category}</h2>
+              <ul className='menu-list'>
+                {items.map((item) => (
+                  <li key={item.id} className="menu-container">
+                    {item.image && <img src={item.image} alt={item.name} width="100" />}
+                    <p>{item.available ? 'Available' : 'Not Available'}</p>
+                    <strong>{item.name}</strong>: ₦{item.price}
+                    <div className="buttons">
+                      <QuantitySelector
+                        initialQuantity={quantities[item.id] || 0}
+                        min={0}
+                        max={10}
+                        onQuantityChange={(quantity) => handleQuantityChange(item.id, quantity)}
+                      />
+                      <button
+                        className="add-to-cart"
+                        onClick={() => handleAddToCart(item)}
+                        disabled={(quantities[item.id] || 0) === 0}
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No menu items available for this cafeteria.</p>
       )}

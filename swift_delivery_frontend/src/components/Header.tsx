@@ -11,6 +11,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({onSearch}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -22,6 +23,23 @@ const Header: React.FC<HeaderProps> = ({onSearch}) => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        const cartItems = JSON.parse(savedCart);
+        const totalItems = cartItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
+        setCartItemCount(totalItems);
+      } else {
+        setCartItemCount(0);
+      }
+    };
+
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
+    return () => window.removeEventListener('storage', updateCartCount);
   }, []);
 
   const handleSearchToggle = () => {
@@ -51,7 +69,10 @@ const Header: React.FC<HeaderProps> = ({onSearch}) => {
           aria-label="Search"
         ></i>
         <i className="bi bi-bell" aria-label="Notifications"></i>
-        <i className="bi bi-cart" aria-label="Cart"></i>
+        <Link to="/orders" className="cart-container">
+            <i className="bi bi-cart" aria-label="Cart"></i>
+            {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
+        </Link>
       </div>
       {isSearchVisible && (
         <input

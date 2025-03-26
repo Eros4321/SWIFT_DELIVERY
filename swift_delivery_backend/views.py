@@ -16,7 +16,12 @@ class CafeteriaViewSet(viewsets.ModelViewSet):
     def menu(self, request, pk=None):
         """Retrieve menu items specific to this cafeteria."""
         cafeteria = get_object_or_404(Cafeteria, pk=pk)
+        category_id = request.query_params.get('category_id')
+        
         menu_items = MenuItem.objects.filter(cafeteria=cafeteria)
+        if category_id:
+            menu_items = menu_items.filter(category_id=category_id)
+        
         serializer = MenuItemSerializer(menu_items, many=True)
         return Response(serializer.data)
 
