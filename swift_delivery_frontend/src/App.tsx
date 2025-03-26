@@ -4,6 +4,7 @@ import { CartProvider } from './context/CartContext';
 import CafeteriaList from './components/CafeteriaList.tsx';
 import Orders from './components/orders.tsx';
 import Menu from './components/menu.tsx';
+import Checkout from './components/checkout.tsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -17,6 +18,8 @@ const App: React.FC = () => {
             <Route path="/cafeteria/:cafeteriaId" element={<Menu />} />
 
             <Route path="/orders" element={<Orders />} />
+
+            <Route path="/checkout" element={<Checkout />} /> 
           </Routes>
         </Router>
     </CartProvider>

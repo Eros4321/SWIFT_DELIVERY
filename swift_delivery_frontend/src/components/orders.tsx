@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/orders.scss';
 
 interface CartItem {
@@ -51,6 +52,12 @@ const Orders: React.FC = () => {
     localStorage.removeItem('cart');
     setCart([]);
   };
+  
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    navigate('/checkout'); // Navigate to checkout page
+  };
 
   const totalAmount = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -81,6 +88,9 @@ const Orders: React.FC = () => {
             <h2>Total: ₦{totalAmount}</h2>
             <button onClick={handleClearCart} className="clear-cart-btn">
               Clear Cart
+            </button>
+            <button onClick={handleCheckout} className="checkout-btn">
+              Checkout
             </button>
         </>
       )}
