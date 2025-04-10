@@ -23,11 +23,42 @@ const Checkout: React.FC = () => {
 
   const totalAmount = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Order placed successfully!');
-    localStorage.removeItem('cart'); // Clear cart after order
+
+    const orderData = {
+      customer_name: name,
+      phone_number: phone,
+      delivery_address: address,
+      items: cart.map(item => ({
+        menu_item: item.id, 
+        quantity: item.quantity
+    }))
+  };
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/orders/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to place order");
+    }
+
+    alert("Order placed successfully!");
+    localStorage.removeItem("cart"); // Clear cart after successful order
     setCart([]);
+    setName("");
+    setPhone("");
+    setAddress("");
+  } catch (error) {
+    console.error("Error placing order:", error);
+    alert("Something went wrong. Please try again.");
+  }
   };
 
   return (
