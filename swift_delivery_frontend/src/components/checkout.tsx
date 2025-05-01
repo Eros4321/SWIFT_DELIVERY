@@ -30,7 +30,7 @@ const Checkout: React.FC = () => {
       customer_name: name,
       phone_number: phone,
       delivery_address: address,
-      items: cart.map(item => ({
+      order_items: cart.map(item => ({
         menu_item: item.id, 
         quantity: item.quantity
     }))
