@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: swift-delivery-backend
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn Swift_Delivery.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: Swift_Delivery.settings
+      - key: PYTHON_VERSION
+        value: 3.10
+    plan: free
+    autoDeploy: true
+
+      
