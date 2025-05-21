@@ -3,7 +3,7 @@ services:
     name: swift-delivery-backend
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn Swift_Delivery.wsgi:application"
+    startCommand: "gunicorn Swift_Delivery.wsgi:application --chdir=Swift_Delivery/Swift_Delivery"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: Swift_Delivery.settings
