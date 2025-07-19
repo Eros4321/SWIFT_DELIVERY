@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: swift_Delivery
+    name: swift_Delivery_backend
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python manage.py runserver 0.0.0.0:8000"
@@ -13,6 +13,8 @@ services:
         value: your-dev-secret-key
       - key: DATABASE_URL
         value: sqlite:///db.sqlite3
+      - key: PYTHONPATH
+      - value: .
     plan: free
     autoDeploy: true
 
