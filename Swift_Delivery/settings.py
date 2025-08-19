@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'swift_delivery_backend'
+    'swift_delivery_backend',
+    'Swift_Delivery'
 ]
 
 MIDDLEWARE = [
