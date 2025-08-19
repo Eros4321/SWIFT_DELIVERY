@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'your-dev-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost 127.0.0.1').split()
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost 127.0.0.1 https://swift-delivery.onrender.com').split()
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -59,7 +59,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'swift-delivery-frontend.vercel.app'
+    'https://swift-delivery-frontend.vercel.app'
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
