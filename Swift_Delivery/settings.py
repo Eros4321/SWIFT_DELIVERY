@@ -59,7 +59,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'https://swift-delivery-frontend-khn550wwd-benjamins-projects-f75264b2.vercel.app/'
+    'https://swift-delivery-frontend-khn550wwd-benjamins-projects-f75264b2.vercel.app/',
+    'https://swift-delivery-frontend.vercel.app/'
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
