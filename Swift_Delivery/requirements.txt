@@ -1,4 +1,3 @@
 Django
 gunicorn
-djangorestframework
 whitenoise

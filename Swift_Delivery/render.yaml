@@ -14,7 +14,7 @@ services:
       - key: DATABASE_URL
         value: sqlite:///db.sqlite3
       - key: PYTHONPATH
-      - value: .
+        value: .
     plan: free
     autoDeploy: true
 
