@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'swift_delivery_backend',
-    'Swift_Delivery'
 ]
 
 MIDDLEWARE = [
