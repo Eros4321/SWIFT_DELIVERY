@@ -3,7 +3,7 @@ services:
     name: Swift_Delivery
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "cd Swift_Delivery && gunicorn Swift_Delivery.wsgi:application"
+    startCommand: "gunicorn Swift_Delivery.wsgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: Swift_Delivery.settings
