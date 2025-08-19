@@ -2,7 +2,7 @@ services:
   - type: web
     name: Swift_Delivery
     env: python
-    buildCommand: "pip install -r Swift_Delivery/requirements.txt"
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "cd Swift_Delivery && gunicorn Swift_Delivery.wsgi:application"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
