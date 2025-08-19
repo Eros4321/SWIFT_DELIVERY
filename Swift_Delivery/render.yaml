@@ -13,8 +13,6 @@ services:
         value: your-dev-secret-key
       - key: DATABASE_URL
         value: sqlite:///db.sqlite3
-      - key: PYTHONPATH
-        value: .
     plan: free
     autoDeploy: true
 
